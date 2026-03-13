@@ -72,8 +72,22 @@ export class ProductService {
     // no code required
   }
   // get all products from the api
-  getProducts(): Observable<ProductInterface[]> {
+  getAllProducts(): Observable<ProductInterface[]> {
     return this.httpClient.get<ProductInterface[]>(this.apiUrl);
   }
 
+  // get product by id
+  viewProduct(id:number): Observable<ProductInterface> {
+    return this.httpClient.get<ProductInterface>(`${this.apiUrl}/${id}`);
+  }
+
+  // delete product by id
+  deleteProduct(id:number): Observable<ProductInterface> {
+    return this.httpClient.delete<ProductInterface>(`${this.apiUrl}/${id}`);
+  }
+
+   // add new product
+  addProduct(product: ProductInterface): Observable<ProductInterface> {
+    return this.httpClient.post<ProductInterface>(this.apiUrl, product);
+  }
 }
