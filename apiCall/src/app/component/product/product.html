@@ -1,0 +1,20 @@
+@if(loading) {
+  <h2 style="text-align:center; padding-top: 80px; font-weight: 700;">API STORE</h2>
+  <div id="content" class="d-grid" style="grid-template-columns: repeat(3, auto); gap: 30px">
+  @for(product of products; track product.id) {
+    <div class="card bg-body-tertiary border-0 p-2" style="width: 30rem;">
+      <div class="card-body ">
+        <h5 class="card-title">{{product.id}}. {{product.title}}</h5>
+        <p class="card-text">{{product.description}}</p>
+        <p class="card-text"><b>{{product.price | currency}}</b></p>
+        <button class="btn btn-info card-link">View</button>
+        <button class="btn btn-success card-link">Add to Cart</button>
+      </div>
+    </div>
+  }
+</div>
+}
+
+
+
+
