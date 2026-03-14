@@ -1,150 +1,225 @@
-@if(!loading) {
+@if (!loading) {
   <div id="header" class="d-flex justify-content-between align-items-center p-4">
     <h2 class="m-0">API STORE</h2>
     <button class="btn btn-dark" (click)="openAddModal()">Add New Product</button>
   </div>
   <div id="content" class="d-grid" style="grid-template-columns: repeat(3, auto); gap: 30px">
-  @for(product of products; track product.id) {
-    <div class="card bg-body-tertiary border-0 p-2" style="width: 30rem;">
-      <div class="card-body ">
-        <h5 class="card-title">{{product.id}}. {{product.title}}</h5>
-        <p class="card-text">{{product.description}}</p>
-        <p class="card-text"><b>{{product.price | currency}}</b></p>
-        <div></div>
-        <button class="btn btn-info card-link" (click)="viewProduct(product.id)">View</button>
-        <button class="btn btn-success card-link">Update</button>
-        <button class="btn btn-danger card-link" (click)="deleteProduct(product.id)">Delete</button>
+    @for (product of products; track product.id) {
+      <div class="card bg-body-tertiary border-0 p-2" style="width: 30rem">
+        <div class="card-body">
+          <h5 class="card-title">{{ product.id }}. {{ product.title }}</h5>
+          <p class="card-text">{{ product.description }}</p>
+          <p class="card-text">
+            <b>{{ product.price | currency }}</b>
+          </p>
+          <div></div>
+          <button class="btn btn-info card-link" (click)="viewProduct(product.id)">View</button>
+          <button class="btn btn-success card-link" (click)="openUpdateModal(product)">Update</button>
+          <button class="btn btn-danger card-link" (click)="deleteProduct(product.id)">
+            Delete
+          </button>
+        </div>
       </div>
-    </div>
-  }
-</div>
+    }
+  </div>
 }
 
-
 <!-- VIEW SINGLE PRODUCT MODAL -->
-@if(viewProductModal && selectedProduct) {
+@if (viewProductModal && selectedProduct) {
+  <div class="modal-backdrop fade show"></div>
 
-<div class="modal-backdrop fade show"></div>
-
-<div class="modal d-block" tabindex="-1">
-  <div class="modal-dialog modal-med">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title">
-          {{selectedProduct.title}}
-        </h5>
-        <button type="button"
-                class="btn-close"
-                (click)="closeModal()">
-        </button>
-      </div>
-
-      <div class="modal-body">
-
-        <div class="row">
-
-          <div class="col-md-8">
-
-            <p>{{selectedProduct.description}}</p>
-
-            <h4>
-              {{selectedProduct.price | currency}}
-            </h4>
-
-          </div>
-
+  <div class="modal d-block" tabindex="-1">
+    <div class="modal-dialog modal-med">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ selectedProduct.title }}
+          </h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
         </div>
 
-      </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-8">
+              <p>{{ selectedProduct.description }}</p>
 
-      <div class="modal-footer">
-        <button class="btn btn-secondary"
-                (click)="closeModal()">
-          Close
-        </button>
-      </div>
+              <h4>
+                {{ selectedProduct.price | currency }}
+              </h4>
+            </div>
+          </div>
+        </div>
 
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeModal()">Close</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
-
 }
 
 <!-- ADD PRODUCT MODAL -->
-@if(addModal) {
-<div class="modal fade" tabindex="-1" [ngClass]="{'show d-block': addModal}" role="dialog">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content bg-tertiary">
+@if (addProductModal) {
+  <div
+    class="modal fade"
+    tabindex="-1"
+    [ngClass]="{ 'show d-block': addProductModal }"
+    role="dialog"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-tertiary">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Product</h5>
+          <button type="button" class="btn-close" (click)="closeAddModal()"></button>
+        </div>
 
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h5 class="modal-title">Add New Product</h5>
-        <button type="button" class="btn-close" (click)="closeAddModal()"></button>
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <form #addForm="ngForm" (ngSubmit)="addNewProduct(); closeAddModal()">
+            <!-- Title -->
+            <div class="mb-3">
+              <label class="form-label">Title</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Enter title"
+                name="title"
+                required
+                [(ngModel)]="newProduct.title"
+                #title="ngModel"
+              />
+              <!-- Validation Message -->
+              <div class="text-danger mt-1" *ngIf="title.invalid && title.touched">
+                Title is required.
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                placeholder="Enter description"
+                name="description"
+                rows="3"
+                required
+                [(ngModel)]="newProduct.description"
+                #description="ngModel"
+              ></textarea>
+              <div class="text-danger mt-1" *ngIf="description.invalid && description.touched">
+                Description is required.
+              </div>
+            </div>
+
+            <!-- Price -->
+            <div class="mb-3">
+              <label class="form-label">Price</label>
+              <input
+                type="number"
+                class="form-control"
+                placeholder="Enter price"
+                name="price"
+                required
+                min="0.01"
+                [(ngModel)]="newProduct.price"
+                #price="ngModel"
+              />
+              <div class="text-danger mt-1" *ngIf="price.invalid && price.touched">
+                Price is required and must be greater than 0.
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-dark w-100" [disabled]="addForm.invalid">
+              Add Product
+            </button>
+          </form>
+        </div>
       </div>
-
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <form #addForm="ngForm" (ngSubmit)="addNewProduct(); closeAddModal();">
-
-          <!-- Title -->
-          <div class="mb-3">
-            <label class="form-label">Title</label>
-            <input type="text"
-                   class="form-control"
-                   placeholder="Enter title"
-                   name="title"
-                   required
-                   [(ngModel)]="newProduct.title"
-                   #title="ngModel">
-            <!-- Validation Message -->
-            <div class="text-danger mt-1" *ngIf="title.invalid && title.touched">
-              Title is required.
-            </div>
-          </div>
-
-          <!-- Description -->
-          <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea class="form-control"
-                      placeholder="Enter description"
-                      name="description"
-                      rows="3"
-                      required
-                      [(ngModel)]="newProduct.description"
-                      #description="ngModel"></textarea>
-            <div class="text-danger mt-1" *ngIf="description.invalid && description.touched">
-              Description is required.
-            </div>
-          </div>
-
-          <!-- Price -->
-          <div class="mb-3">
-            <label class="form-label">Price</label>
-            <input type="number"
-                   class="form-control"
-                   placeholder="Enter price"
-                   name="price"
-                   required
-                   min="0.01"
-                   [(ngModel)]="newProduct.price"
-                   #price="ngModel">
-            <div class="text-danger mt-1" *ngIf="price.invalid && price.touched">
-              Price is required and must be greater than 0.
-            </div>
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit"
-                  class="btn btn-dark w-100"
-                  [disabled]="addForm.invalid">
-            Add Product
-          </button>
-
-        </form>
-      </div>
-
     </div>
   </div>
-</div>
+}
+
+<!-- UPDATE PRODUCT MODAL -->
+@if (updateProductModal) {
+  <div
+    class="modal fade"
+    tabindex="-1"
+    [ngClass]="{ 'show d-block': updateProductModal }"
+    role="dialog"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-tertiary">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Product</h5>
+          <button type="button" class="btn-close" (click)="closeUpdateModal()"></button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <form #updateForm="ngForm" (ngSubmit)="updateProduct(); closeUpdateModal()">
+            <!-- Title -->
+            <div class="mb-3">
+              <label class="form-label">Title</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Enter title"
+                name="title"
+                required
+                [(ngModel)]="newProduct.title"
+                #title="ngModel"
+              />
+              <!-- Validation Message -->
+              <div class="text-danger mt-1" *ngIf="title.invalid && title.touched">
+                Title is required.
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                placeholder="Enter description"
+                name="description"
+                rows="3"
+                required
+                [(ngModel)]="newProduct.description"
+                #description="ngModel"
+              ></textarea>
+              <div class="text-danger mt-1" *ngIf="description.invalid && description.touched">
+                Description is required.
+              </div>
+            </div>
+
+            <!-- Price -->
+            <div class="mb-3">
+              <label class="form-label">Price</label>
+              <input
+                type="number"
+                class="form-control"
+                placeholder="Enter price"
+                name="price"
+                required
+                min="0.01"
+                [(ngModel)]="newProduct.price"
+                #price="ngModel"
+              />
+              <div class="text-danger mt-1" *ngIf="price.invalid && price.touched">
+                Price is required and must be greater than 0.
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-dark w-100" [disabled]="updateForm.invalid">
+              Update Product
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 }

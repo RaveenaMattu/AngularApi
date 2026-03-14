@@ -82,12 +82,17 @@ export class ProductService {
   }
 
   // delete product by id
-  deleteProduct(id:number): Observable<ProductInterface> {
-    return this.httpClient.delete<ProductInterface>(`${this.apiUrl}/${id}`);
+  deleteProduct(id:number): Observable<void> {
+    return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-   // add new product
+  // add new product
   addProduct(product: ProductInterface): Observable<ProductInterface> {
     return this.httpClient.post<ProductInterface>(this.apiUrl, product);
+  }
+
+  // update existing product
+  updateProduct(product:ProductInterface): Observable<ProductInterface> {
+    return this.httpClient.put<ProductInterface>(`${this.apiUrl}/${product.id}`, product);
   }
 }
